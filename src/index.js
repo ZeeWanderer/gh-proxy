@@ -20,14 +20,16 @@ export default {
       redirect: 'follow',
     });
 
-    const contentType = resp.headers.get('content-type') || 'application/octet-stream';
-    const body = await resp.arrayBuffer();
+    const body = await resp.text(); // Use text() for easier decoding/wrapping (assumes text-based content like JSON/MD)
 
-    return new Response(body, {
+    // Wrap in HTML
+    const htmlBody = `<html><body><pre>${body}</pre></body></html>`;
+
+    return new Response(htmlBody, {
       status: resp.status,
       headers: {
-        'Content-Type': contentType,
-        'Access-Control-Allow-Origin': '*', // Add this for CORS
+        'Content-Type': 'text/html',
+        'Access-Control-Allow-Origin': '*',
       },
     });
   }
